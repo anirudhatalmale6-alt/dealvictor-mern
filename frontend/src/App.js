@@ -21,6 +21,12 @@ import Shop from './pages/Shop';
 import Services from './pages/Services';
 import Membership from './pages/Membership';
 import Messages from './pages/Messages';
+import ProductDetail from './pages/ProductDetail';
+import ServiceDetail from './pages/ServiceDetail';
+import Profile from './pages/Profile';
+import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import OrderTracking from './pages/OrderTracking';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -63,8 +69,28 @@ function App() {
                 }
               />
               <Route path="/shop" element={<Shop />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/service/:id" element={<ServiceDetail />} />
+              <Route path="/profile/:username" element={<Profile />} />
               <Route path="/membership" element={<Membership />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route
+                path="/checkout"
+                element={
+                  <PrivateRoute>
+                    <Checkout />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/order/:orderId"
+                element={
+                  <PrivateRoute>
+                    <OrderTracking />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="/messages"
                 element={
