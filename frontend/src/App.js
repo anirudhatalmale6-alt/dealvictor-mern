@@ -16,6 +16,7 @@ import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import PostProject from './pages/PostProject';
 import ProjectDetail from './pages/ProjectDetail';
+import Shop from './pages/Shop';
 
 // Styles
 import './styles/global.css';
@@ -49,6 +50,7 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route path="/shop" element={<Shop />} />
             </Routes>
           </main>
           <Routes>
