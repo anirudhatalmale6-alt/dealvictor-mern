@@ -17,6 +17,7 @@ import Projects from './pages/Projects';
 import PostProject from './pages/PostProject';
 import ProjectDetail from './pages/ProjectDetail';
 import Shop from './pages/Shop';
+import Services from './pages/Services';
 
 // Styles
 import './styles/global.css';
@@ -51,6 +52,7 @@ function App() {
                 }
               />
               <Route path="/shop" element={<Shop />} />
+              <Route path="/services" element={<Services />} />
             </Routes>
           </main>
           <Routes>
