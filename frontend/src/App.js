@@ -21,6 +21,13 @@ import Services from './pages/Services';
 import Membership from './pages/Membership';
 import Messages from './pages/Messages';
 
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminMemberships from './pages/admin/AdminMemberships';
+import AdminCommissions from './pages/admin/AdminCommissions';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminSettings from './pages/admin/AdminSettings';
+
 // Styles
 import './styles/global.css';
 
@@ -64,6 +71,20 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              {/* Admin Routes */}
+              <Route
+                path="/admin"
+                element={
+                  <PrivateRoute>
+                    <AdminDashboard />
+                  </PrivateRoute>
+                }
+              >
+                <Route path="memberships" element={<AdminMemberships />} />
+                <Route path="commissions" element={<AdminCommissions />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
             </Routes>
           </main>
           <Routes>
