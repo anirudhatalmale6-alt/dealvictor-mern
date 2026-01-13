@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=375, initial-scale=1.0">
+  <title>DealVictor Mobile App Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .preview-title {
+      color: #fff;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .preview-subtitle {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .screen-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+      max-width: 800px;
+    }
+
+    .screen-btn {
+      padding: 8px 16px;
+      background: #334155;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .screen-btn:hover, .screen-btn.active {
+      background: #6366f1;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      background: #000;
+      border-radius: 50px;
+      padding: 12px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .phone-frame::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 30px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: #f8fafc;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+      height: 100%;
+      flex-direction: column;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 44px;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .status-bar.dark {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: #fff;
+    }
+
+    .status-bar.light {
+      background: #fff;
+      color: #1e293b;
+    }
+
+    .status-icons {
+      display: flex;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    /* Bottom Tab Bar */
+    .tab-bar {
+      height: 84px;
+      background: #fff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding-top: 10px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .tab-item.active {
+      color: #6366f1;
+    }
+
+    .tab-item i {
+      font-size: 20px;
+    }
+
+    /* Scrollable Content */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 100px;
+    }
+
+    /* Login Screen */
+    .login-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      padding: 60px 24px 40px;
+      text-align: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+
+    .login-logo {
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .login-logo span {
+      color: #f59e0b;
+    }
+
+    .login-tagline {
+      color: rgba(255,255,255,0.8);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .login-form {
+      padding: 24px;
+      margin-top: -20px;
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      flex: 1;
+    }
+
+    .login-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 0 16px;
+      margin-bottom: 16px;
+    }
+
+    .input-group i {
+      color: #64748b;
+      font-size: 16px;
+      margin-right: 12px;
+    }
+
+    .input-group input {
+      flex: 1;
+      padding: 16px 0;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      color: #1e293b;
+    }
+
+    .forgot-link {
+      text-align: right;
+      margin-bottom: 24px;
+    }
+
+    .forgot-link a {
+      color: #6366f1;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 24px 0;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .divider span {
+      padding: 0 16px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .social-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #1e293b;
+    }
+
+    .register-link {
+      text-align: center;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .register-link a {
+      color: #6366f1;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* Home Screen */
+    .home-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      padding: 50px 20px 30px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+    }
+
+    .home-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .greeting {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .sub-greeting {
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .notification-btn {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+
+    .search-bar i {
+      color: #64748b;
+      margin-right: 12px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      border: none;
+      font-size: 14px;
+      color: #1e293b;
+    }
+
+    .filter-btn {
+      width: 36px;
+      height: 36px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6366f1;
+    }
+
+    .section {
+      padding: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .see-all {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6366f1;
+    }
+
+    .categories-row {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+    }
+
+    .category-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .category-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 12px;
+      padding: 0 20px;
+    }
+
+    .action-card {
+      flex: 1;
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .action-card i {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .action-card span {
+      font-size: 11px;
+      font-weight: 600;
+      color: #1e293b;
+      display: block;
+    }
+
+    .service-card {
+      width: 160px;
+      min-width: 160px;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-right: 12px;
+    }
+
+    .service-image {
+      height: 100px;
+      background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      font-size: 28px;
+    }
+
+    .service-content {
+      padding: 12px;
+    }
+
+    .seller-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .seller-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background: #6366f1;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .seller-name {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .service-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.4;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .service-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .service-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+    }
+
+    .service-rating i {
+      color: #f59e0b;
+    }
+
+    .service-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .services-row {
+      display: flex;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .project-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .project-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .project-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .project-budget {
+      font-size: 14px;
+      font-weight: 700;
+      color: #6366f1;
+    }
+
+    .project-bids {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .skills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .skill-tag {
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .project-time {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .upgrade-banner {
+      margin: 0 20px 20px;
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .upgrade-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .upgrade-content i {
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .upgrade-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .upgrade-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .upgrade-banner > i {
+      color: #fff;
+      font-size: 18px;
+    }
+
+    /* Projects Screen */
+    .page-header {
+      padding: 50px 20px 16px;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .header-btn {
+      width: 40px;
+      height: 40px;
+      background: #f1f5f9;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6366f1;
+    }
+
+    .search-section {
+      padding: 0 20px 16px;
+      background: #fff;
+    }
+
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 20px 16px;
+      overflow-x: auto;
+    }
+
+    .chip {
+      padding: 8px 16px;
+      background: #fff;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .chip.active {
+      background: #6366f1;
+      color: #fff;
+    }
+
+    .projects-list {
+      padding: 0 20px;
+    }
+
+    /* Messages Screen */
+    .tabs-row {
+      display: flex;
+      gap: 12px;
+      padding: 0 20px 16px;
+    }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #fff;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    .tab.active {
+      background: #6366f1;
+      color: #fff;
+    }
+
+    .tab-badge {
+      background: #ef4444;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .conversation-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .conversation-item.unread {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .conv-avatar-wrap {
+      position: relative;
+    }
+
+    .conv-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: #6366f1;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .online-dot {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 14px;
+      height: 14px;
+      background: #10b981;
+      border: 2px solid #fff;
+      border-radius: 50%;
+    }
+
+    .conv-content {
+      flex: 1;
+    }
+
+    .conv-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .conv-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .conv-time {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .conv-project {
+      font-size: 11px;
+      color: #6366f1;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .conv-message {
+      font-size: 13px;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .conversation-item.unread .conv-message {
+      color: #1e293b;
+      font-weight: 500;
+    }
+
+    .unread-badge {
+      width: 22px;
+      height: 22px;
+      background: #6366f1;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .messages-list {
+      padding: 0 20px;
+    }
+
+    /* Profile Screen */
+    .profile-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      padding: 50px 20px 24px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+    }
+
+    .profile-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .profile-info {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.2);
+      border: 3px solid rgba(255,255,255,0.3);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .profile-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .profile-role {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 12px;
+    }
+
+    .membership-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .membership-badge i {
+      color: #f59e0b;
+    }
+
+    .profile-stats {
+      display: flex;
+      background: rgba(255,255,255,0.15);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .profile-stat {
+      flex: 1;
+      text-align: center;
+    }
+
+    .profile-stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .profile-stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 4px;
+    }
+
+    .stat-divider {
+      width: 1px;
+      background: rgba(255,255,255,0.2);
+      margin: 0 8px;
+    }
+
+    .bids-card {
+      background: #fff;
+      margin: -16px 20px 20px;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .bids-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .bids-header i {
+      font-size: 22px;
+      color: #6366f1;
+    }
+
+    .bids-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .bids-count {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .bids-progress {
+      height: 6px;
+      background: #f1f5f9;
+      border-radius: 3px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .bids-progress-fill {
+      height: 100%;
+      width: 75%;
+      background: #6366f1;
+      border-radius: 3px;
+    }
+
+    .buy-bids-btn {
+      width: 100%;
+      padding: 10px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #6366f1;
+    }
+
+    .menu-section {
+      padding: 0 20px 16px;
+    }
+
+    .menu-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .menu-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-icon {
+      width: 40px;
+      height: 40px;
+      background: #f1f5f9;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      color: #64748b;
+      font-size: 16px;
+    }
+
+    .menu-item.accent .menu-icon {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .menu-label {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .menu-item.accent .menu-label {
+      color: #f59e0b;
+      font-weight: 600;
+    }
+
+    .menu-arrow {
+      color: #cbd5e1;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 0 20px 20px;
+      padding: 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ef4444;
+    }
+
+    .app-version {
+      text-align: center;
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="preview-title">DealVictor Mobile App Preview</h1>
+  <p class="preview-subtitle">Click buttons below to switch between screens</p>
+
+  <div class="screen-nav">
+    <button class="screen-btn active" onclick="showScreen('login')">Login</button>
+    <button class="screen-btn" onclick="showScreen('home')">Home</button>
+    <button class="screen-btn" onclick="showScreen('projects')">Projects</button>
+    <button class="screen-btn" onclick="showScreen('messages')">Messages</button>
+    <button class="screen-btn" onclick="showScreen('profile')">Profile</button>
+  </div>
+
+  <div class="phone-frame">
+    <div class="phone-screen">
+      <!-- Login Screen -->
+      <div class="screen active" id="login">
+        <div class="status-bar dark">
+          <span>9:41</span>
+          <div class="status-icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+          </div>
+        </div>
+        <div class="login-header">
+          <div class="login-logo">Deal<span>Victor</span></div>
+          <p class="login-tagline">Welcome back!</p>
+        </div>
+        <div class="login-form">
+          <h2 class="login-title">Sign In</h2>
+          <p class="login-subtitle">Enter your credentials to access your account</p>
+
+          <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="text" placeholder="Email Address">
+          </div>
+
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Password">
+            <i class="fas fa-eye" style="color: #64748b;"></i>
+          </div>
+
+          <div class="forgot-link">
+            <a href="#">Forgot Password?</a>
+          </div>
+
+          <button class="btn-primary">Sign In</button>
+
+          <div class="divider">
+            <span>OR</span>
+          </div>
+
+          <div class="social-buttons">
+            <div class="social-btn"><i class="fab fa-facebook-f" style="color: #1877F2;"></i></div>
+            <div class="social-btn"><i class="fab fa-twitter" style="color: #1DA1F2;"></i></div>
+            <div class="social-btn"><i class="fab fa-github"></i></div>
+          </div>
+
+          <p class="register-link">Don't have an account? <a href="#">Sign Up</a></p>
+        </div>
+      </div>
+
+      <!-- Home Screen -->
+      <div class="screen" id="home">
+        <div class="home-header">
+          <div class="status-bar dark" style="padding: 12px 0;">
+            <span>9:41</span>
+            <div class="status-icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery-full"></i>
+            </div>
+          </div>
+          <div class="home-header-top">
+            <div>
+              <div class="greeting">Hello, John</div>
+              <div class="sub-greeting">Find your next opportunity</div>
+            </div>
+            <div class="notification-btn">
+              <i class="fas fa-bell"></i>
+              <div class="notification-badge">3</div>
+            </div>
+          </div>
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search services, projects...">
+            <div class="filter-btn"><i class="fas fa-sliders-h"></i></div>
+          </div>
+        </div>
+
+        <div class="scroll-content">
+          <div class="section">
+            <div class="section-header">
+              <h3 class="section-title">Categories</h3>
+              <span class="see-all">See All</span>
+            </div>
+            <div class="categories-row">
+              <div class="category-item">
+                <div class="category-icon" style="background: rgba(99,102,241,0.15); color: #6366f1;"><i class="fas fa-desktop"></i></div>
+                <span class="category-name">Web Dev</span>
+              </div>
+              <div class="category-item">
+                <div class="category-icon" style="background: rgba(16,185,129,0.15); color: #10b981;"><i class="fas fa-pen-nib"></i></div>
+                <span class="category-name">Design</span>
+              </div>
+              <div class="category-item">
+                <div class="category-icon" style="background: rgba(245,158,11,0.15); color: #f59e0b;"><i class="fas fa-mobile-alt"></i></div>
+                <span class="category-name">Mobile</span>
+              </div>
+              <div class="category-item">
+                <div class="category-icon" style="background: rgba(239,68,68,0.15); color: #ef4444;"><i class="fas fa-edit"></i></div>
+                <span class="category-name">Writing</span>
+              </div>
+              <div class="category-item">
+                <div class="category-icon" style="background: rgba(139,92,246,0.15); color: #8b5cf6;"><i class="fas fa-video"></i></div>
+                <span class="category-name">Video</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <div class="action-card">
+              <i class="fas fa-briefcase" style="color: #6366f1;"></i>
+              <span>Find Projects</span>
+            </div>
+            <div class="action-card">
+              <i class="fas fa-star" style="color: #10b981;"></i>
+              <span>Browse Services</span>
+            </div>
+            <div class="action-card">
+              <i class="fas fa-shopping-bag" style="color: #f59e0b;"></i>
+              <span>Shop</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-header">
+              <h3 class="section-title">Featured Services</h3>
+              <span class="see-all">See All</span>
+            </div>
+            <div class="services-row">
+              <div class="service-card">
+                <div class="service-image"><i class="fas fa-image"></i></div>
+                <div class="service-content">
+                  <div class="seller-row">
+                    <div class="seller-avatar">J</div>
+                    <span class="seller-name">John D.</span>
+                  </div>
+                  <div class="service-title">Professional Logo Design</div>
+                  <div class="service-footer">
+                    <div class="service-rating"><i class="fas fa-star"></i> 4.9</div>
+                    <div class="service-price">$50</div>
+                  </div>
+                </div>
+              </div>
+              <div class="service-card">
+                <div class="service-image"><i class="fas fa-image"></i></div>
+                <div class="service-content">
+                  <div class="seller-row">
+                    <div class="seller-avatar">S</div>
+                    <span class="seller-name">Sarah M.</span>
+                  </div>
+                  <div class="service-title">WordPress Website Dev</div>
+                  <div class="service-footer">
+                    <div class="service-rating"><i class="fas fa-star"></i> 5.0</div>
+                    <div class="service-price">$150</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-header">
+              <h3 class="section-title">Latest Projects</h3>
+              <span class="see-all">See All</span>
+            </div>
+            <div class="project-card">
+              <div class="project-title">E-commerce Website Development</div>
+              <div class="project-meta">
+                <span class="project-budget">$1,000 - $2,500</span>
+                <span class="project-bids">15 bids</span>
+              </div>
+              <div class="skills-row">
+                <span class="skill-tag">React</span>
+                <span class="skill-tag">Node.js</span>
+                <span class="skill-tag">MongoDB</span>
+              </div>
+              <span class="project-time">2 hours ago</span>
+            </div>
+          </div>
+
+          <div class="upgrade-banner">
+            <div class="upgrade-content">
+              <i class="fas fa-crown"></i>
+              <div>
+                <div class="upgrade-title">Upgrade to Pro</div>
+                <div class="upgrade-desc">Get unlimited bids & premium features</div>
+              </div>
+            </div>
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab-item active"><i class="fas fa-home"></i><span>Home</span></div>
+          <div class="tab-item"><i class="fas fa-briefcase"></i><span>Projects</span></div>
+          <div class="tab-item"><i class="fas fa-star"></i><span>Services</span></div>
+          <div class="tab-item"><i class="fas fa-comment-dots"></i><span>Messages</span></div>
+          <div class="tab-item"><i class="fas fa-user"></i><span>Profile</span></div>
+        </div>
+      </div>
+
+      <!-- Projects Screen -->
+      <div class="screen" id="projects">
+        <div class="page-header">
+          <h1 class="page-title">Find Projects</h1>
+          <div class="header-btn"><i class="fas fa-sliders-h"></i></div>
+        </div>
+        <div class="search-section">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search projects...">
+          </div>
+        </div>
+        <div class="chips-row">
+          <div class="chip active">All</div>
+          <div class="chip">Web Development</div>
+          <div class="chip">Mobile Apps</div>
+          <div class="chip">Design</div>
+        </div>
+        <div class="scroll-content">
+          <div class="projects-list">
+            <div class="project-card">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div class="seller-avatar" style="width: 36px; height: 36px; font-size: 14px;">T</div>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600; color: #1e293b;">TechCorp <i class="fas fa-check-circle" style="color: #3b82f6; font-size: 11px;"></i></div>
+                    <div style="font-size: 11px; color: #64748b;"><i class="fas fa-star" style="color: #f59e0b;"></i> 4.8</div>
+                  </div>
+                </div>
+                <span style="font-size: 11px; color: #94a3b8;">2 hours ago</span>
+              </div>
+              <div class="project-title">E-commerce Website with React & Node.js</div>
+              <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.5;">Looking for experienced developer to build complete e-commerce platform...</p>
+              <div class="skills-row">
+                <span class="skill-tag">React</span>
+                <span class="skill-tag">Node.js</span>
+                <span class="skill-tag">MongoDB</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #f1f5f9;">
+                <div>
+                  <div style="font-size: 10px; color: #64748b; text-transform: uppercase;">Fixed Price</div>
+                  <div style="font-size: 15px; font-weight: 700; color: #6366f1;">$1,000 - $2,500</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <i class="fas fa-file-alt" style="color: #6366f1;"></i>
+                  <span style="font-size: 13px; font-weight: 600; color: #1e293b;">15 bids</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div class="seller-avatar" style="width: 36px; height: 36px; font-size: 14px; background: #10b981;">F</div>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600; color: #1e293b;">FoodieApp <i class="fas fa-check-circle" style="color: #3b82f6; font-size: 11px;"></i></div>
+                    <div style="font-size: 11px; color: #64748b;"><i class="fas fa-star" style="color: #f59e0b;"></i> 4.9</div>
+                  </div>
+                </div>
+                <span style="font-size: 11px; color: #94a3b8;">4 hours ago</span>
+              </div>
+              <div class="project-title">iOS and Android App for Food Delivery</div>
+              <p style="font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.5;">Need a cross-platform mobile application with real-time tracking...</p>
+              <div class="skills-row">
+                <span class="skill-tag">React Native</span>
+                <span class="skill-tag">Firebase</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #f1f5f9;">
+                <div>
+                  <div style="font-size: 10px; color: #64748b; text-transform: uppercase;">Fixed Price</div>
+                  <div style="font-size: 15px; font-weight: 700; color: #6366f1;">$2,000 - $5,000</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <i class="fas fa-file-alt" style="color: #6366f1;"></i>
+                  <span style="font-size: 13px; font-weight: 600; color: #1e293b;">23 bids</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab-item"><i class="fas fa-home"></i><span>Home</span></div>
+          <div class="tab-item active"><i class="fas fa-briefcase"></i><span>Projects</span></div>
+          <div class="tab-item"><i class="fas fa-star"></i><span>Services</span></div>
+          <div class="tab-item"><i class="fas fa-comment-dots"></i><span>Messages</span></div>
+          <div class="tab-item"><i class="fas fa-user"></i><span>Profile</span></div>
+        </div>
+      </div>
+
+      <!-- Messages Screen -->
+      <div class="screen" id="messages">
+        <div class="page-header">
+          <h1 class="page-title">Messages</h1>
+          <div class="header-btn"><i class="fas fa-edit"></i></div>
+        </div>
+        <div class="search-section">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search messages...">
+          </div>
+        </div>
+        <div class="tabs-row">
+          <div class="tab active">All Messages</div>
+          <div class="tab">Unread <span class="tab-badge">6</span></div>
+        </div>
+        <div class="scroll-content">
+          <div class="messages-list">
+            <div class="conversation-item unread">
+              <div class="conv-avatar-wrap">
+                <div class="conv-avatar">J</div>
+                <div class="online-dot"></div>
+              </div>
+              <div class="conv-content">
+                <div class="conv-header">
+                  <span class="conv-name">John Smith</span>
+                  <span class="conv-time">2 min ago</span>
+                </div>
+                <div class="conv-project">E-commerce Website</div>
+                <div class="conv-message">Hi, I wanted to discuss the project timeline...</div>
+              </div>
+              <div class="unread-badge">3</div>
+            </div>
+
+            <div class="conversation-item">
+              <div class="conv-avatar-wrap">
+                <div class="conv-avatar" style="background: #10b981;">S</div>
+                <div class="online-dot"></div>
+              </div>
+              <div class="conv-content">
+                <div class="conv-header">
+                  <span class="conv-name">Sarah Wilson</span>
+                  <span class="conv-time">1 hour ago</span>
+                </div>
+                <div class="conv-project">Logo Design</div>
+                <div class="conv-message">Thanks for the delivery! Great work on the designs.</div>
+              </div>
+            </div>
+
+            <div class="conversation-item unread">
+              <div class="conv-avatar-wrap">
+                <div class="conv-avatar" style="background: #f59e0b;">M</div>
+              </div>
+              <div class="conv-content">
+                <div class="conv-header">
+                  <span class="conv-name">Mike Johnson</span>
+                  <span class="conv-time">3 hours ago</span>
+                </div>
+                <div class="conv-project">Mobile App UI</div>
+                <div class="conv-message">Can you send me the updated mockups when ready?</div>
+              </div>
+              <div class="unread-badge">1</div>
+            </div>
+
+            <div class="conversation-item">
+              <div class="conv-avatar-wrap">
+                <div class="conv-avatar" style="background: #ef4444;">E</div>
+              </div>
+              <div class="conv-content">
+                <div class="conv-header">
+                  <span class="conv-name">Emily Davis</span>
+                  <span class="conv-time">Yesterday</span>
+                </div>
+                <div class="conv-project">WordPress Site</div>
+                <div class="conv-message">The milestone has been released. Thank you!</div>
+              </div>
+            </div>
+
+            <div class="conversation-item unread">
+              <div class="conv-avatar-wrap">
+                <div class="conv-avatar" style="background: #8b5cf6;">A</div>
+                <div class="online-dot"></div>
+              </div>
+              <div class="conv-content">
+                <div class="conv-header">
+                  <span class="conv-name">Alex Chen</span>
+                  <span class="conv-time">Yesterday</span>
+                </div>
+                <div class="conv-message">I have a new project that might interest you...</div>
+              </div>
+              <div class="unread-badge">2</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab-item"><i class="fas fa-home"></i><span>Home</span></div>
+          <div class="tab-item"><i class="fas fa-briefcase"></i><span>Projects</span></div>
+          <div class="tab-item"><i class="fas fa-star"></i><span>Services</span></div>
+          <div class="tab-item active"><i class="fas fa-comment-dots"></i><span>Messages</span></div>
+          <div class="tab-item"><i class="fas fa-user"></i><span>Profile</span></div>
+        </div>
+      </div>
+
+      <!-- Profile Screen -->
+      <div class="screen" id="profile">
+        <div class="profile-header">
+          <div class="profile-header-top">
+            <span style="font-size: 20px; font-weight: 700;">Profile</span>
+            <i class="fas fa-cog" style="font-size: 20px;"></i>
+          </div>
+          <div class="profile-info">
+            <div class="profile-avatar">J</div>
+            <div class="profile-name">John Doe</div>
+            <div class="profile-role">Freelancer</div>
+            <div class="membership-badge">
+              <i class="fas fa-crown"></i>
+              <span>Free Plan</span>
+            </div>
+          </div>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="profile-stat-value">$12,450</div>
+              <div class="profile-stat-label">Earnings</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="profile-stat">
+              <div class="profile-stat-value">47</div>
+              <div class="profile-stat-label">Projects</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="profile-stat">
+              <div class="profile-stat-value" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <i class="fas fa-star" style="color: #f59e0b; font-size: 12px;"></i> 4.9
+              </div>
+              <div class="profile-stat-label">234 reviews</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-content" style="padding-top: 0;">
+          <div class="bids-card">
+            <div class="bids-header">
+              <i class="fas fa-file-alt"></i>
+              <div>
+                <div class="bids-title">Bids Remaining</div>
+                <div class="bids-count">15 / 20 bids</div>
+              </div>
+            </div>
+            <div class="bids-progress">
+              <div class="bids-progress-fill"></div>
+            </div>
+            <div class="buy-bids-btn">Buy More</div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-section-title">Account</div>
+            <div class="menu-card">
+              <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-user"></i></div>
+                <span class="menu-label">Edit Profile</span>
+                <i class="fas fa-chevron-right menu-arrow"></i>
+              </div>
+              <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-briefcase"></i></div>
+                <span class="menu-label">My Projects</span>
+                <i class="fas fa-chevron-right menu-arrow"></i>
+              </div>
+              <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-star"></i></div>
+                <span class="menu-label">My Services</span>
+                <i class="fas fa-chevron-right menu-arrow"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-section-title">Membership</div>
+            <div class="menu-card">
+              <div class="menu-item accent">
+                <div class="menu-icon"><i class="fas fa-crown"></i></div>
+                <span class="menu-label">Upgrade Plan</span>
+                <i class="fas fa-chevron-right menu-arrow"></i>
+              </div>
+              <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-box"></i></div>
+                <span class="menu-label">Buy Bids</span>
+                <i class="fas fa-chevron-right menu-arrow"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <div class="menu-section-title">Settings</div>
+            <div class="menu-card">
+              <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-bell"></i></div>
+                <span class="menu-label">Notifications</span>
+                <i class="fas fa-chevron-right menu-arrow"></i>
+              </div>
+              <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-lock"></i></div>
+                <span class="menu-label">Security</span>
+                <i class="fas fa-chevron-right menu-arrow"></i>
+              </div>
+              <div class="menu-item">
+                <div class="menu-icon"><i class="fas fa-question-circle"></i></div>
+                <span class="menu-label">Help & Support</span>
+                <i class="fas fa-chevron-right menu-arrow"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </div>
+
+          <div class="app-version">DealVictor v1.0.0</div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab-item"><i class="fas fa-home"></i><span>Home</span></div>
+          <div class="tab-item"><i class="fas fa-briefcase"></i><span>Projects</span></div>
+          <div class="tab-item"><i class="fas fa-star"></i><span>Services</span></div>
+          <div class="tab-item"><i class="fas fa-comment-dots"></i><span>Messages</span></div>
+          <div class="tab-item active"><i class="fas fa-user"></i><span>Profile</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showScreen(screenId) {
+      // Hide all screens
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      // Show selected screen
+      document.getElementById(screenId).classList.add('active');
+      // Update nav buttons
+      document.querySelectorAll('.screen-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
