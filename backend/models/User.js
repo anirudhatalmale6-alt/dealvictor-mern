@@ -111,15 +111,84 @@ const userSchema = new mongoose.Schema({
     totalReviews: { type: Number, default: 0 }
   },
   // Wallet/Balance
-  balance: {
-    available: { type: Number, default: 0 },
-    pending: { type: Number, default: 0 }
+  balance: { type: Number, default: 0 },
+  pendingWithdrawal: { type: Number, default: 0 },
+  totalWithdrawn: { type: Number, default: 0 },
+
+  // Membership
+  membership: {
+    plan: { type: String, enum: ['free', 'starter', 'pro', 'business'], default: 'free' },
+    billingCycle: { type: String, enum: ['monthly', 'annual'], default: 'monthly' },
+    bidsPerMonth: { type: Number, default: 10 },
+    bidsRemaining: { type: Number, default: 10 },
+    platformFee: { type: Number, default: 10 },
+    expiresAt: { type: Date },
+    nextBidRecharge: { type: Date },
+    isActive: { type: Boolean, default: true }
   },
-  // Notifications preferences
-  notifications: {
-    email: { type: Boolean, default: true },
-    sms: { type: Boolean, default: false },
-    push: { type: Boolean, default: true }
+
+  // Multiple roles support
+  roles: [{
+    type: String,
+    enum: ['buyer', 'freelancer', 'seller', 'admin']
+  }],
+
+  // Suspension status
+  isSuspended: { type: Boolean, default: false },
+  suspendedAt: { type: Date },
+  suspensionReason: { type: String },
+
+  // Rating
+  rating: { type: Number, default: 0 },
+  reviewCount: { type: Number, default: 0 },
+
+  // Online status
+  isOnline: { type: Boolean, default: false },
+  lastSeen: { type: Date },
+  lastLogin: { type: Date },
+
+  // Withdrawal requests
+  withdrawalRequests: [{
+    amount: { type: Number, required: true },
+    paymentMethod: { type: String },
+    paymentDetails: { type: mongoose.Schema.Types.Mixed },
+    status: { type: String, enum: ['pending', 'processing', 'completed', 'rejected'], default: 'pending' },
+    requestedAt: { type: Date, default: Date.now },
+    processedAt: { type: Date },
+    transactionId: { type: String },
+    rejectionReason: { type: String }
+  }],
+
+  // In-app notifications
+  notifications: [{
+    type: { type: String },
+    title: { type: String },
+    message: { type: String },
+    link: { type: String },
+    data: { type: mongoose.Schema.Types.Mixed },
+    isRead: { type: Boolean, default: false },
+    readAt: { type: Date },
+    createdAt: { type: Date, default: Date.now }
+  }],
+
+  // Notification settings
+  settings: {
+    emailNotifications: { type: Boolean, default: true },
+    smsNotifications: { type: Boolean, default: false },
+    pushNotifications: { type: Boolean, default: true },
+    currency: { type: String, default: 'USD' },
+    language: { type: String, default: 'en' },
+    timezone: { type: String, default: 'UTC' },
+    profileVisibility: { type: String, enum: ['public', 'private'], default: 'public' }
+  },
+
+  // Notification preferences
+  notificationPreferences: {
+    notifyOnNewBid: { type: Boolean, default: true },
+    notifyOnMessage: { type: Boolean, default: true },
+    notifyOnOrderUpdate: { type: Boolean, default: true },
+    notifyOnPayment: { type: Boolean, default: true },
+    marketingEmails: { type: Boolean, default: false }
   },
   // Reset password
   resetPasswordToken: String,

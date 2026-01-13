@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider } from './context/AuthContext';
+import { SocketProvider } from './context/SocketContext';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import PrivateRoute from './components/common/PrivateRoute';
@@ -34,6 +35,7 @@ import './styles/global.css';
 function App() {
   return (
     <AuthProvider>
+      <SocketProvider>
       <Router>
         <div className="App">
           <Navbar />
@@ -105,6 +107,7 @@ function App() {
           />
         </div>
       </Router>
+      </SocketProvider>
     </AuthProvider>
   );
 }

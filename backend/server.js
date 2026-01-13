@@ -22,6 +22,7 @@ const reviewRoutes = require('./routes/reviews');
 const categoryRoutes = require('./routes/categories');
 const adminRoutes = require('./routes/admin');
 const paymentRoutes = require('./routes/payments');
+const notificationRoutes = require('./routes/notifications');
 
 // Initialize Express app
 const app = express();
@@ -59,6 +60,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
