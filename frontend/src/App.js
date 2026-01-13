@@ -18,6 +18,7 @@ import PostProject from './pages/PostProject';
 import ProjectDetail from './pages/ProjectDetail';
 import Shop from './pages/Shop';
 import Services from './pages/Services';
+import Membership from './pages/Membership';
 
 // Styles
 import './styles/global.css';
@@ -53,6 +54,7 @@ function App() {
               />
               <Route path="/shop" element={<Shop />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/membership" element={<Membership />} />
             </Routes>
           </main>
           <Routes>

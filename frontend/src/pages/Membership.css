@@ -1,0 +1,471 @@
+.membership-page {
+  min-height: calc(100vh - 70px);
+  background: var(--lighter-gray);
+}
+
+.membership-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  padding: var(--spacing-2xl) 0;
+  text-align: center;
+  color: var(--white);
+}
+
+.membership-header h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+}
+
+.membership-header p {
+  opacity: 0.9;
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Billing Toggle */
+.billing-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-full);
+}
+
+.billing-toggle span {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+  transition: color var(--transition-fast);
+}
+
+.billing-toggle span.active {
+  color: var(--white);
+  font-weight: 600;
+}
+
+.save-badge {
+  background: var(--accent);
+  color: var(--white);
+  font-size: var(--font-size-xs);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-left: var(--spacing-xs);
+}
+
+.toggle-switch {
+  width: 50px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-full);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.toggle-switch.annual {
+  background: var(--accent);
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: var(--white);
+  border-radius: var(--radius-full);
+  transition: transform var(--transition-fast);
+}
+
+.toggle-switch.annual .toggle-knob {
+  transform: translateX(24px);
+}
+
+/* Plans Grid */
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+  padding: var(--spacing-2xl) 0;
+  margin-top: -60px;
+}
+
+.plan-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  position: relative;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+}
+
+.plan-card.popular {
+  border: 2px solid var(--primary);
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+.plan-card.popular:hover {
+  transform: scale(1.05) translateY(-5px);
+}
+
+.plan-card.selected {
+  border: 2px solid var(--secondary);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--white);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.plan-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: var(--spacing-md);
+}
+
+.plan-icon.gray {
+  background: var(--lighter-gray);
+  color: var(--gray);
+}
+
+.plan-icon.blue {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--info);
+}
+
+.plan-icon.purple {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary);
+}
+
+.plan-icon.gold {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--accent);
+}
+
+.plan-name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: var(--spacing-xs);
+}
+
+.plan-description {
+  font-size: var(--font-size-sm);
+  color: var(--gray);
+  margin-bottom: var(--spacing-lg);
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: var(--spacing-xs);
+}
+
+.plan-price .currency {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.plan-price .amount {
+  font-size: var(--font-size-4xl);
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 1;
+}
+
+.plan-price .period {
+  font-size: var(--font-size-sm);
+  color: var(--gray);
+  margin-left: 4px;
+}
+
+.plan-savings {
+  font-size: var(--font-size-xs);
+  color: var(--secondary);
+  font-weight: 500;
+  margin-bottom: var(--spacing-md);
+}
+
+.bids-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background: var(--lighter-gray);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.bids-count {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.bids-label {
+  font-size: var(--font-size-sm);
+  color: var(--gray);
+}
+
+.plan-features {
+  flex: 1;
+  list-style: none;
+  margin-bottom: var(--spacing-lg);
+}
+
+.plan-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+  font-size: var(--font-size-sm);
+  color: var(--dark);
+}
+
+.plan-features li.excluded {
+  color: var(--gray);
+  text-decoration: line-through;
+}
+
+.plan-features .check {
+  color: var(--secondary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.plan-features .cross {
+  color: var(--gray);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.select-plan-btn {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--white);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.select-plan-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.select-plan-btn.free {
+  background: var(--lighter-gray);
+  color: var(--gray);
+}
+
+.select-plan-btn.free:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Benefits Section */
+.benefits-section {
+  padding: var(--spacing-2xl) 0;
+}
+
+.benefits-section h2 {
+  text-align: center;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: var(--spacing-xl);
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.benefit-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.benefit-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto var(--spacing-md);
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--primary);
+}
+
+.benefit-card h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: var(--spacing-sm);
+}
+
+.benefit-card p {
+  font-size: var(--font-size-sm);
+  color: var(--gray);
+  line-height: 1.6;
+}
+
+/* FAQ Section */
+.faq-section {
+  padding: var(--spacing-2xl) 0;
+}
+
+.faq-section h2 {
+  text-align: center;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: var(--spacing-xl);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.faq-item {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.faq-item h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: var(--spacing-sm);
+}
+
+.faq-item p {
+  font-size: var(--font-size-sm);
+  color: var(--gray);
+  line-height: 1.6;
+}
+
+/* CTA Section */
+.membership-page .cta-section {
+  padding: var(--spacing-2xl);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: var(--radius-xl);
+  margin: var(--spacing-xl) 0;
+}
+
+.membership-page .cta-content {
+  text-align: center;
+  color: var(--white);
+}
+
+.membership-page .cta-content h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+}
+
+.membership-page .cta-content p {
+  opacity: 0.9;
+  margin-bottom: var(--spacing-xl);
+}
+
+.membership-page .cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.membership-page .cta-buttons .btn-primary {
+  background: var(--white);
+  color: var(--primary);
+}
+
+.membership-page .cta-buttons .btn-outline {
+  background: transparent;
+  border: 2px solid var(--white);
+  color: var(--white);
+}
+
+.membership-page .cta-buttons .btn-outline:hover {
+  background: var(--white);
+  color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .plans-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .plan-card.popular {
+    transform: none;
+  }
+
+  .plan-card.popular:hover {
+    transform: translateY(-5px);
+  }
+
+  .benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .plans-grid {
+    grid-template-columns: 1fr;
+    margin-top: -40px;
+  }
+
+  .benefits-grid,
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .billing-toggle {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .membership-page .cta-buttons {
+    flex-direction: column;
+  }
+
+  .membership-page .cta-buttons .btn {
+    width: 100%;
+  }
+}
