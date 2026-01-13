@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   FiHome, FiBriefcase, FiFileText, FiShoppingBag, FiMessageSquare,
-  FiStar, FiDollarSign, FiSettings, FiCrown, FiCreditCard, FiTrendingUp,
+  FiStar, FiDollarSign, FiSettings, FiAward, FiCreditCard, FiTrendingUp,
   FiUsers, FiCheckCircle, FiClock, FiAlertCircle, FiPlus, FiArrowRight
 } from 'react-icons/fi';
 import './Dashboard.css';
@@ -132,7 +132,7 @@ const Dashboard = () => {
             <ul>
               <li className="upgrade-item">
                 <Link to="/membership">
-                  <FiCrown /> <span>Upgrade Plan</span>
+                  <FiAward /> <span>Upgrade Plan</span>
                 </Link>
               </li>
               <li>
@@ -218,7 +218,7 @@ const Dashboard = () => {
           {/* Membership & Bids Card */}
           <div className="dashboard-card membership-card">
             <div className="card-header">
-              <h3><FiCrown /> Membership</h3>
+              <h3><FiAward /> Membership</h3>
               <span className={`plan-badge ${membership.plan.toLowerCase()}`}>{membership.plan}</span>
             </div>
             <div className="card-body">
