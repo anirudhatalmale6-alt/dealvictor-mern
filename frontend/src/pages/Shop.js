@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   FiSearch, FiFilter, FiGrid, FiList, FiStar, FiHeart,
-  FiShoppingCart, FiChevronDown, FiShare2
+  FiShoppingCart, FiChevronDown, FiShare2, FiLoader
 } from 'react-icons/fi';
+import { useCart } from '../context/CartContext';
+import { productsAPI } from '../services/api';
+import { toast } from 'react-toastify';
 import './Shop.css';
 
 const Shop = () => {
   const [viewMode, setViewMode] = useState('grid');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     category: '',
     priceRange: '',
@@ -15,9 +21,43 @@ const Shop = () => {
     sortBy: 'newest'
   });
 
-  // Mock products data
-  const products = [
+  const { addToCart, isInCart } = useCart();
+
+  // Fetch products from API
+  useEffect(() => {
+    fetchProducts();
+  }, [filters.sortBy]);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const params = {
+        search: searchTerm,
+        category: filters.category,
+        sort: filters.sortBy,
+        limit: 20
+      };
+
+      const res = await productsAPI.getAll(params);
+      if (res.data.success && res.data.data) {
+        setProducts(res.data.data);
+      } else if (res.data.products) {
+        setProducts(res.data.products);
+      } else {
+        // Use sample products if API returns empty
+        setProducts(getSampleProducts());
+      }
+    } catch (err) {
+      console.log('Using sample products');
+      setProducts(getSampleProducts());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getSampleProducts = () => [
     {
+      _id: '1',
       id: 1,
       title: 'Wireless Bluetooth Headphones Pro',
       description: 'Premium noise-cancelling wireless headphones with 40-hour battery life',
@@ -33,6 +73,7 @@ const Shop = () => {
       freeShipping: true
     },
     {
+      _id: '2',
       id: 2,
       title: 'Smart Watch Series X',
       description: 'Advanced fitness tracking, heart rate monitor, GPS enabled',
@@ -48,6 +89,7 @@ const Shop = () => {
       freeShipping: true
     },
     {
+      _id: '3',
       id: 3,
       title: 'Premium Laptop Stand - Aluminum',
       description: 'Ergonomic design, adjustable height, heat dissipation',
@@ -63,6 +105,7 @@ const Shop = () => {
       freeShipping: false
     },
     {
+      _id: '4',
       id: 4,
       title: 'Ergonomic Wireless Mouse',
       description: 'Vertical design, reduces wrist strain, 6 buttons',
@@ -78,6 +121,7 @@ const Shop = () => {
       freeShipping: true
     },
     {
+      _id: '5',
       id: 5,
       title: 'Mechanical Gaming Keyboard',
       description: 'RGB backlit, Cherry MX switches, programmable keys',
@@ -93,6 +137,7 @@ const Shop = () => {
       freeShipping: true
     },
     {
+      _id: '6',
       id: 6,
       title: 'Portable Power Bank 20000mAh',
       description: 'Fast charging, USB-C, 3 output ports, LED display',
@@ -130,6 +175,21 @@ const Shop = () => {
     { label: '$200+', value: '200+' }
   ];
 
+  const handleAddToCart = (product) => {
+    addToCart({
+      id: product._id || product.id,
+      title: product.title,
+      price: product.price,
+      image: product.images?.[0] || product.image,
+      seller: product.seller?.name || 'Unknown'
+    });
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchProducts();
+  };
+
   const getDiscountPercent = (price, originalPrice) => {
     return Math.round((1 - price / originalPrice) * 100);
   };
@@ -146,6 +206,24 @@ const Shop = () => {
     }
     return stars;
   };
+
+  // Filter products based on local filters
+  const filteredProducts = products.filter(product => {
+    if (filters.category && product.category !== filters.category) return false;
+    if (filters.rating && product.rating < parseInt(filters.rating)) return false;
+    if (filters.priceRange) {
+      const [min, max] = filters.priceRange.split('-').map(Number);
+      if (max) {
+        if (product.price < min || product.price > max) return false;
+      } else {
+        if (product.price < min) return false;
+      }
+    }
+    if (searchTerm && !product.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <div className="shop-page">
@@ -231,10 +309,15 @@ const Shop = () => {
           <main className="shop-main">
             {/* Search & Sort Bar */}
             <div className="shop-toolbar">
-              <div className="search-box">
+              <form onSubmit={handleSearch} className="search-box">
                 <FiSearch className="search-icon" />
-                <input type="text" placeholder="Search products..." />
-              </div>
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </form>
               <div className="toolbar-right">
                 <div className="sort-by">
                   <span>Sort by:</span>
@@ -267,71 +350,95 @@ const Shop = () => {
             </div>
 
             <div className="results-info">
-              <span>{products.length} products found</span>
+              <span>{filteredProducts.length} products found</span>
             </div>
 
-            {/* Products Grid */}
-            <div className={`products-grid ${viewMode}`}>
-              {products.map(product => (
-                <div className="product-card" key={product.id}>
-                  <div className="product-image">
-                    <img src={product.images[0]} alt={product.title} />
-                    <div className="product-badges">
-                      {product.originalPrice > product.price && (
-                        <span className="discount-badge">
-                          -{getDiscountPercent(product.price, product.originalPrice)}%
-                        </span>
-                      )}
-                      {product.freeShipping && (
-                        <span className="shipping-badge">Free Shipping</span>
-                      )}
+            {/* Loading State */}
+            {loading ? (
+              <div className="loading-state">
+                <FiLoader className="spinner" />
+                <p>Loading products...</p>
+              </div>
+            ) : (
+              <>
+                {/* Products Grid */}
+                <div className={`products-grid ${viewMode}`}>
+                  {filteredProducts.map(product => (
+                    <div className="product-card" key={product._id || product.id}>
+                      <div className="product-image">
+                        <img src={product.images?.[0] || product.image} alt={product.title} />
+                        <div className="product-badges">
+                          {product.originalPrice && product.originalPrice > product.price && (
+                            <span className="discount-badge">
+                              -{getDiscountPercent(product.price, product.originalPrice)}%
+                            </span>
+                          )}
+                          {product.freeShipping && (
+                            <span className="shipping-badge">Free Shipping</span>
+                          )}
+                        </div>
+                        <div className="product-actions">
+                          <button className="action-btn wishlist"><FiHeart /></button>
+                          <button className="action-btn share"><FiShare2 /></button>
+                        </div>
+                        <Link to={`/product/${product._id || product.id}`} className="quick-view-btn">
+                          Quick View
+                        </Link>
+                      </div>
+                      <div className="product-content">
+                        <Link to={`/store/${product.seller?.name?.toLowerCase() || 'seller'}`} className="seller-link">
+                          {product.seller?.name || 'Seller'}
+                          {product.seller?.verified && <span className="verified">✓</span>}
+                        </Link>
+                        <h3 className="product-title">
+                          <Link to={`/product/${product._id || product.id}`}>{product.title}</Link>
+                        </h3>
+                        <p className="product-description">{product.description}</p>
+                        <div className="product-rating">
+                          <div className="stars">{renderStars(product.rating || 0)}</div>
+                          <span className="rating-value">{product.rating || 0}</span>
+                          <span className="review-count">({product.reviews || 0})</span>
+                        </div>
+                        <div className="product-price">
+                          <span className="current-price">${(product.price || 0).toFixed(2)}</span>
+                          {product.originalPrice && product.originalPrice > product.price && (
+                            <span className="original-price">${product.originalPrice.toFixed(2)}</span>
+                          )}
+                        </div>
+                        <button
+                          className={`add-to-cart-btn ${isInCart(product._id || product.id) ? 'in-cart' : ''}`}
+                          onClick={() => handleAddToCart(product)}
+                        >
+                          <FiShoppingCart /> {isInCart(product._id || product.id) ? 'In Cart' : 'Add to Cart'}
+                        </button>
+                      </div>
                     </div>
-                    <div className="product-actions">
-                      <button className="action-btn wishlist"><FiHeart /></button>
-                      <button className="action-btn share"><FiShare2 /></button>
-                    </div>
-                    <Link to={`/product/${product.id}`} className="quick-view-btn">
-                      Quick View
-                    </Link>
-                  </div>
-                  <div className="product-content">
-                    <Link to={`/store/${product.seller.name.toLowerCase()}`} className="seller-link">
-                      {product.seller.name}
-                      {product.seller.verified && <span className="verified">✓</span>}
-                    </Link>
-                    <h3 className="product-title">
-                      <Link to={`/product/${product.id}`}>{product.title}</Link>
-                    </h3>
-                    <p className="product-description">{product.description}</p>
-                    <div className="product-rating">
-                      <div className="stars">{renderStars(product.rating)}</div>
-                      <span className="rating-value">{product.rating}</span>
-                      <span className="review-count">({product.reviews})</span>
-                    </div>
-                    <div className="product-price">
-                      <span className="current-price">${product.price.toFixed(2)}</span>
-                      {product.originalPrice > product.price && (
-                        <span className="original-price">${product.originalPrice.toFixed(2)}</span>
-                      )}
-                    </div>
-                    <button className="add-to-cart-btn">
-                      <FiShoppingCart /> Add to Cart
+                  ))}
+                </div>
+
+                {filteredProducts.length === 0 && (
+                  <div className="no-products">
+                    <p>No products found matching your criteria.</p>
+                    <button onClick={() => setFilters({ category: '', priceRange: '', rating: '', sortBy: 'newest' })}>
+                      Clear Filters
                     </button>
                   </div>
-                </div>
-              ))}
-            </div>
+                )}
 
-            {/* Pagination */}
-            <div className="pagination">
-              <button className="page-btn" disabled>Previous</button>
-              <button className="page-btn active">1</button>
-              <button className="page-btn">2</button>
-              <button className="page-btn">3</button>
-              <span className="page-dots">...</span>
-              <button className="page-btn">10</button>
-              <button className="page-btn">Next</button>
-            </div>
+                {/* Pagination */}
+                {filteredProducts.length > 0 && (
+                  <div className="pagination">
+                    <button className="page-btn" disabled>Previous</button>
+                    <button className="page-btn active">1</button>
+                    <button className="page-btn">2</button>
+                    <button className="page-btn">3</button>
+                    <span className="page-dots">...</span>
+                    <button className="page-btn">10</button>
+                    <button className="page-btn">Next</button>
+                  </div>
+                )}
+              </>
+            )}
           </main>
         </div>
       </div>

@@ -4,93 +4,57 @@ import {
   FiTrash2, FiMinus, FiPlus, FiShoppingCart, FiArrowRight,
   FiTag, FiTruck, FiShield, FiChevronRight
 } from 'react-icons/fi';
+import { useCart } from '../context/CartContext';
+import { toast } from 'react-toastify';
 import './Cart.css';
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      type: 'product',
-      title: 'Wireless Bluetooth Headphones Pro',
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
-      seller: { name: 'TechStore', verified: true },
-      price: 79.99,
-      quantity: 1,
-      stock: 50
-    },
-    {
-      id: 2,
-      type: 'product',
-      title: 'Smart Watch Series X',
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
-      seller: { name: 'GadgetHub', verified: true },
-      price: 199.99,
-      quantity: 2,
-      stock: 25
-    },
-    {
-      id: 3,
-      type: 'service',
-      title: 'Professional Website Development',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=200',
-      seller: { name: 'Alex Johnson', verified: true },
-      price: 350.00,
-      package: 'Standard',
-      deliveryDays: 14
-    }
-  ]);
-
+  const { cartItems, cartTotal, updateQuantity, removeFromCart, clearCart } = useCart();
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
 
-  const updateQuantity = (id, change) => {
-    setCartItems(items =>
-      items.map(item => {
-        if (item.id === id && item.type === 'product') {
-          const newQty = Math.max(1, Math.min(item.stock, item.quantity + change));
-          return { ...item, quantity: newQty };
-        }
-        return item;
-      })
-    );
+  const handleUpdateQuantity = (id, change) => {
+    const item = cartItems.find(i => i.id === id);
+    if (item) {
+      const newQty = item.quantity + change;
+      if (newQty >= 1) {
+        updateQuantity(id, newQty);
+      }
+    }
   };
 
-  const removeItem = (id) => {
-    setCartItems(items => items.filter(item => item.id !== id));
+  const handleRemoveItem = (id) => {
+    removeFromCart(id);
   };
 
   const applyCoupon = () => {
     if (couponCode.toLowerCase() === 'save10') {
       setAppliedCoupon({ code: 'SAVE10', discount: 10, type: 'percent' });
+      toast.success('Coupon applied: 10% off');
     } else if (couponCode.toLowerCase() === 'flat20') {
       setAppliedCoupon({ code: 'FLAT20', discount: 20, type: 'fixed' });
+      toast.success('Coupon applied: $20 off');
     } else {
-      alert('Invalid coupon code');
+      toast.error('Invalid coupon code');
     }
     setCouponCode('');
   };
 
   const removeCoupon = () => {
     setAppliedCoupon(null);
-  };
-
-  const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => {
-      return sum + (item.price * (item.quantity || 1));
-    }, 0);
+    toast.info('Coupon removed');
   };
 
   const calculateDiscount = () => {
     if (!appliedCoupon) return 0;
-    const subtotal = calculateSubtotal();
     if (appliedCoupon.type === 'percent') {
-      return (subtotal * appliedCoupon.discount) / 100;
+      return (cartTotal * appliedCoupon.discount) / 100;
     }
     return appliedCoupon.discount;
   };
 
   const calculateTotal = () => {
-    return calculateSubtotal() - calculateDiscount();
+    return cartTotal - calculateDiscount();
   };
 
   if (cartItems.length === 0) {
@@ -135,45 +99,31 @@ const Cart = () => {
                 <div className="item-details">
                   <div className="item-header">
                     <div>
-                      <span className={`item-type ${item.type}`}>
-                        {item.type === 'product' ? 'Product' : 'Service'}
-                      </span>
+                      <span className="item-type product">Product</span>
                       <h3>
-                        <Link to={`/${item.type}/${item.id}`}>{item.title}</Link>
+                        <Link to={`/product/${item.id}`}>{item.title}</Link>
                       </h3>
                       <p className="seller">
-                        by {item.seller.name}
-                        {item.seller.verified && <span className="verified">✓</span>}
+                        by {item.seller}
                       </p>
                     </div>
-                    <button className="remove-btn" onClick={() => removeItem(item.id)}>
+                    <button className="remove-btn" onClick={() => handleRemoveItem(item.id)}>
                       <FiTrash2 />
                     </button>
                   </div>
 
-                  {item.type === 'service' && (
-                    <div className="service-info">
-                      <span className="package">Package: {item.package}</span>
-                      <span className="delivery">Delivery: {item.deliveryDays} days</span>
-                    </div>
-                  )}
-
                   <div className="item-footer">
-                    {item.type === 'product' ? (
-                      <div className="quantity-controls">
-                        <button onClick={() => updateQuantity(item.id, -1)}>
-                          <FiMinus />
-                        </button>
-                        <span>{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, 1)}>
-                          <FiPlus />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="quantity-fixed">Qty: 1</div>
-                    )}
+                    <div className="quantity-controls">
+                      <button onClick={() => handleUpdateQuantity(item.id, -1)}>
+                        <FiMinus />
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => handleUpdateQuantity(item.id, 1)}>
+                        <FiPlus />
+                      </button>
+                    </div>
                     <div className="item-price">
-                      ${(item.price * (item.quantity || 1)).toFixed(2)}
+                      ${(item.price * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -188,7 +138,7 @@ const Cart = () => {
             <div className="summary-rows">
               <div className="summary-row">
                 <span>Subtotal</span>
-                <span>${calculateSubtotal().toFixed(2)}</span>
+                <span>${cartTotal.toFixed(2)}</span>
               </div>
 
               {appliedCoupon && (

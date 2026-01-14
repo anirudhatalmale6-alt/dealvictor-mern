@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import { FiMenu, FiX, FiSearch, FiShoppingCart, FiMessageSquare, FiBell, FiUser, FiLogOut, FiChevronDown } from 'react-icons/fi';
 import './Navbar.css';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -65,7 +67,7 @@ const Navbar = () => {
               </Link>
               <Link to="/cart" className="nav-icon-btn">
                 <FiShoppingCart />
-                <span className="notification-badge">2</span>
+                {cartCount > 0 && <span className="notification-badge">{cartCount}</span>}
               </Link>
 
               <div className="user-menu-container">
@@ -133,6 +135,10 @@ const Navbar = () => {
             </>
           ) : (
             <>
+              <Link to="/cart" className="nav-icon-btn">
+                <FiShoppingCart />
+                {cartCount > 0 && <span className="notification-badge">{cartCount}</span>}
+              </Link>
               <Link to="/login" className="btn btn-outline">Log In</Link>
               <Link to="/register" className="btn btn-primary">Sign Up</Link>
             </>
