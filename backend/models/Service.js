@@ -83,9 +83,20 @@ const serviceSchema = new mongoose.Schema({
   }],
   status: {
     type: String,
-    enum: ['draft', 'active', 'paused', 'deleted'],
-    default: 'active'
+    enum: ['draft', 'pending', 'active', 'paused', 'rejected', 'deleted'],
+    default: 'pending'
   },
+  approvalStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  approvedAt: Date,
+  rejectionReason: String,
   featured: {
     type: Boolean,
     default: false

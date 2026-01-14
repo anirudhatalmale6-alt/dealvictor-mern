@@ -55,7 +55,9 @@ export const usersAPI = {
   getMembership: () => api.get('/users/me/membership'),
   requestWithdrawal: (data) => api.post('/users/withdraw', data),
   updateSettings: (data) => api.put('/users/settings', data),
-  becomeSeller: () => api.post('/users/become-seller')
+  becomeSeller: () => api.post('/users/become-seller'),
+  getFreelancers: (params) => api.get('/users/freelancers', { params }),
+  getAll: (params) => api.get('/users', { params })
 };
 
 // Projects API
@@ -168,9 +170,22 @@ export const adminAPI = {
   getUsers: (params) => api.get('/admin/users', { params }),
   updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
   deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  suspendUser: (id, data) => api.put(`/admin/users/${id}/suspend`, data),
+  getUserWallet: (id) => api.get(`/admin/users/${id}/wallet`),
+  updateUserWallet: (id, data) => api.put(`/admin/users/${id}/wallet`, data),
   getSettings: () => api.get('/admin/settings'),
   updateSettings: (data) => api.put('/admin/settings', data),
+  // Projects
   getProjects: (params) => api.get('/admin/projects', { params }),
+  getPendingProjects: () => api.get('/admin/projects/pending'),
+  approveProject: (id) => api.put(`/admin/projects/${id}/approve`),
+  rejectProject: (id, data) => api.put(`/admin/projects/${id}/reject`, data),
+  // Services
+  getServices: (params) => api.get('/admin/services', { params }),
+  getPendingServices: () => api.get('/admin/services/pending'),
+  approveService: (id) => api.put(`/admin/services/${id}/approve`),
+  rejectService: (id, data) => api.put(`/admin/services/${id}/reject`, data),
+  // Orders & Withdrawals
   getOrders: (params) => api.get('/admin/orders', { params }),
   getPendingWithdrawals: () => api.get('/admin/withdrawals'),
   processWithdrawal: (userId, withdrawalId, data) =>

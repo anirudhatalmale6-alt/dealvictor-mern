@@ -1,171 +1,44 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   FiSearch, FiFilter, FiGrid, FiList, FiStar, FiHeart,
-  FiClock, FiRefreshCw, FiShare2
+  FiClock, FiRefreshCw, FiShare2, FiX
 } from 'react-icons/fi';
+import { servicesAPI, categoriesAPI } from '../services/api';
+import { toast } from 'react-toastify';
 import './Services.css';
 
 const Services = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [services, setServices] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('grid');
-  const [filters, setFilters] = useState({
-    category: '',
-    priceRange: '',
-    deliveryTime: '',
-    sellerLevel: '',
-    sortBy: 'recommended'
+  const [showFilters, setShowFilters] = useState(false);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 12,
+    total: 0,
+    pages: 0
   });
 
-  // Mock services data
-  const services = [
-    {
-      id: 1,
-      title: 'I will create a professional React website for your business',
-      description: 'Full-stack web development with React, Node.js, and modern UI/UX design',
-      images: ['https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400'],
-      seller: {
-        name: 'Alex Chen',
-        avatar: null,
-        level: 'Top Rated',
-        rating: 4.9,
-        reviews: 234,
-        verified: true
-      },
-      category: 'Web Development',
-      packages: {
-        basic: { price: 150, delivery: 3, revisions: 2 },
-        standard: { price: 300, delivery: 5, revisions: 5 },
-        premium: { price: 500, delivery: 7, revisions: 'unlimited' }
-      },
-      ordersInQueue: 5
-    },
-    {
-      id: 2,
-      title: 'I will design a modern logo and brand identity for your company',
-      description: 'Creative logo design with brand guidelines, color palette, and typography',
-      images: ['https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400'],
-      seller: {
-        name: 'Sarah Wilson',
-        avatar: null,
-        level: 'Pro',
-        rating: 5.0,
-        reviews: 456,
-        verified: true
-      },
-      category: 'Logo Design',
-      packages: {
-        basic: { price: 50, delivery: 2, revisions: 3 },
-        standard: { price: 100, delivery: 3, revisions: 5 },
-        premium: { price: 200, delivery: 5, revisions: 'unlimited' }
-      },
-      ordersInQueue: 12
-    },
-    {
-      id: 3,
-      title: 'I will boost your SEO rankings with proven strategies',
-      description: 'Complete SEO audit, keyword research, on-page optimization, and backlink building',
-      images: ['https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=400'],
-      seller: {
-        name: 'Mike Johnson',
-        avatar: null,
-        level: 'Verified',
-        rating: 4.8,
-        reviews: 189,
-        verified: true
-      },
-      category: 'SEO',
-      packages: {
-        basic: { price: 100, delivery: 7, revisions: 1 },
-        standard: { price: 250, delivery: 14, revisions: 2 },
-        premium: { price: 500, delivery: 30, revisions: 3 }
-      },
-      ordersInQueue: 3
-    },
-    {
-      id: 4,
-      title: 'I will edit your videos professionally for YouTube',
-      description: 'High-quality video editing with effects, transitions, color grading, and sound design',
-      images: ['https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400'],
-      seller: {
-        name: 'Emily Davis',
-        avatar: null,
-        level: 'Pro',
-        rating: 4.7,
-        reviews: 98,
-        verified: false
-      },
-      category: 'Video Editing',
-      packages: {
-        basic: { price: 75, delivery: 3, revisions: 2 },
-        standard: { price: 150, delivery: 5, revisions: 4 },
-        premium: { price: 300, delivery: 7, revisions: 'unlimited' }
-      },
-      ordersInQueue: 7
-    },
-    {
-      id: 5,
-      title: 'I will develop a mobile app for iOS and Android',
-      description: 'Cross-platform mobile app development using React Native with modern UI',
-      images: ['https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400'],
-      seller: {
-        name: 'David Park',
-        avatar: null,
-        level: 'Top Rated',
-        rating: 4.9,
-        reviews: 312,
-        verified: true
-      },
-      category: 'Mobile Development',
-      packages: {
-        basic: { price: 500, delivery: 14, revisions: 2 },
-        standard: { price: 1000, delivery: 21, revisions: 5 },
-        premium: { price: 2000, delivery: 30, revisions: 'unlimited' }
-      },
-      ordersInQueue: 2
-    },
-    {
-      id: 6,
-      title: 'I will write SEO-optimized blog posts and articles',
-      description: 'Engaging content writing for blogs, websites, and marketing materials',
-      images: ['https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400'],
-      seller: {
-        name: 'Jessica Brown',
-        avatar: null,
-        level: 'Verified',
-        rating: 4.6,
-        reviews: 156,
-        verified: true
-      },
-      category: 'Content Writing',
-      packages: {
-        basic: { price: 25, delivery: 2, revisions: 2 },
-        standard: { price: 50, delivery: 3, revisions: 3 },
-        premium: { price: 100, delivery: 5, revisions: 'unlimited' }
-      },
-      ordersInQueue: 8
-    }
-  ];
-
-  const categories = [
-    'All Categories',
-    'Web Development',
-    'Mobile Development',
-    'Logo Design',
-    'UI/UX Design',
-    'SEO',
-    'Digital Marketing',
-    'Video Editing',
-    'Content Writing',
-    'Virtual Assistant'
-  ];
+  const [filters, setFilters] = useState({
+    category: searchParams.get('category') || '',
+    priceMin: searchParams.get('priceMin') || '',
+    priceMax: searchParams.get('priceMax') || '',
+    deliveryTime: searchParams.get('deliveryTime') || '',
+    sellerLevel: searchParams.get('sellerLevel') || '',
+    search: searchParams.get('search') || '',
+    sort: searchParams.get('sort') || '-stats.avgRating'
+  });
 
   const priceRanges = [
-    { label: 'Any Price', value: '' },
-    { label: 'Under $50', value: '0-50' },
-    { label: '$50 - $100', value: '50-100' },
-    { label: '$100 - $200', value: '100-200' },
-    { label: '$200 - $500', value: '200-500' },
-    { label: '$500+', value: '500+' }
+    { label: 'Any Price', min: '', max: '' },
+    { label: 'Under $50', min: '0', max: '50' },
+    { label: '$50 - $100', min: '50', max: '100' },
+    { label: '$100 - $200', min: '100', max: '200' },
+    { label: '$200 - $500', min: '200', max: '500' },
+    { label: '$500+', min: '500', max: '' }
   ];
 
   const deliveryTimes = [
@@ -173,7 +46,7 @@ const Services = () => {
     { label: 'Up to 24 hours', value: '1' },
     { label: 'Up to 3 days', value: '3' },
     { label: 'Up to 7 days', value: '7' },
-    { label: 'Any time', value: 'any' }
+    { label: 'Up to 14 days', value: '14' }
   ];
 
   const sellerLevels = [
@@ -184,9 +57,118 @@ const Services = () => {
     { label: 'New Seller', value: 'new' }
   ];
 
+  const sortOptions = [
+    { label: 'Recommended', value: '-stats.avgRating' },
+    { label: 'Best Selling', value: '-stats.orders' },
+    { label: 'Newest', value: '-createdAt' },
+    { label: 'Price: Low to High', value: 'startingPrice' },
+    { label: 'Price: High to Low', value: '-startingPrice' }
+  ];
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await categoriesAPI.getAll({ type: 'service' });
+        setCategories(res.data.data || res.data.categories || []);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Fetch services
+  const fetchServices = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = {
+        page: pagination.page,
+        limit: pagination.limit,
+        status: 'active'
+      };
+
+      if (filters.category) params.category = filters.category;
+      if (filters.priceMin) params.minPrice = filters.priceMin;
+      if (filters.priceMax) params.maxPrice = filters.priceMax;
+      if (filters.deliveryTime) params.deliveryTime = filters.deliveryTime;
+      if (filters.search) params.search = filters.search;
+      if (filters.sort) params.sort = filters.sort;
+
+      const res = await servicesAPI.getAll(params);
+      setServices(res.data.services || res.data.data || []);
+      setPagination(prev => ({
+        ...prev,
+        total: res.data.pagination?.total || 0,
+        pages: res.data.pagination?.pages || 0
+      }));
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      toast.error('Failed to load services');
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination.page, pagination.limit, filters]);
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
+
+  // Update URL params
+  useEffect(() => {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+    });
+    setSearchParams(params);
+  }, [filters, setSearchParams]);
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const handlePriceRangeChange = (range) => {
+    setFilters(prev => ({
+      ...prev,
+      priceMin: range.min,
+      priceMax: range.max
+    }));
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      category: '',
+      priceMin: '',
+      priceMax: '',
+      deliveryTime: '',
+      sellerLevel: '',
+      search: '',
+      sort: '-stats.avgRating'
+    });
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchServices();
+  };
+
   const getLevelBadgeClass = (level) => {
+    if (!level) return '';
     return level.toLowerCase().replace(' ', '-');
   };
+
+  const getSellerLevel = (seller) => {
+    if (!seller) return 'New';
+    if (seller.stats?.avgRating >= 4.8 && seller.stats?.totalReviews >= 50) return 'Top Rated';
+    if (seller.isVerified) return 'Pro';
+    if (seller.stats?.totalReviews >= 10) return 'Verified';
+    return 'New Seller';
+  };
+
+  const activeFiltersCount = Object.values(filters).filter(v => v && v !== '-stats.avgRating').length;
 
   return (
     <div className="services-page">
@@ -205,28 +187,31 @@ const Services = () => {
             <div className="filter-group">
               <select
                 value={filters.category}
-                onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                onChange={(e) => handleFilterChange('category', e.target.value)}
               >
-                {categories.map((cat, i) => (
-                  <option key={i} value={i === 0 ? '' : cat}>{cat}</option>
+                <option value="">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>{cat.name}</option>
                 ))}
               </select>
             </div>
             <div className="filter-group">
               <select
-                value={filters.priceRange}
-                onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
+                value={`${filters.priceMin}-${filters.priceMax}`}
+                onChange={(e) => {
+                  const [min, max] = e.target.value.split('-');
+                  handlePriceRangeChange({ min, max });
+                }}
               >
-                <option value="">Budget</option>
                 {priceRanges.map((range, i) => (
-                  <option key={i} value={range.value}>{range.label}</option>
+                  <option key={i} value={`${range.min}-${range.max}`}>{range.label}</option>
                 ))}
               </select>
             </div>
             <div className="filter-group">
               <select
                 value={filters.deliveryTime}
-                onChange={(e) => setFilters({ ...filters, deliveryTime: e.target.value })}
+                onChange={(e) => handleFilterChange('deliveryTime', e.target.value)}
               >
                 <option value="">Delivery Time</option>
                 {deliveryTimes.map((time, i) => (
@@ -237,7 +222,7 @@ const Services = () => {
             <div className="filter-group">
               <select
                 value={filters.sellerLevel}
-                onChange={(e) => setFilters({ ...filters, sellerLevel: e.target.value })}
+                onChange={(e) => handleFilterChange('sellerLevel', e.target.value)}
               >
                 <option value="">Seller Level</option>
                 {sellerLevels.map((level, i) => (
@@ -245,27 +230,37 @@ const Services = () => {
                 ))}
               </select>
             </div>
-            <div className="search-box">
+            <form onSubmit={handleSearch} className="search-box">
               <FiSearch className="search-icon" />
-              <input type="text" placeholder="Search services..." />
-            </div>
+              <input
+                type="text"
+                placeholder="Search services..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange('search', e.target.value)}
+              />
+            </form>
+            {activeFiltersCount > 0 && (
+              <button className="clear-btn" onClick={clearFilters}>
+                <FiX /> Clear
+              </button>
+            )}
           </div>
 
-          {/* Results Info */}
+          {/* Results Bar */}
           <div className="results-bar">
-            <span className="results-count">{services.length} services available</span>
+            <span className="results-count">
+              {loading ? 'Loading...' : `${pagination.total} services available`}
+            </span>
             <div className="results-controls">
               <div className="sort-by">
                 <span>Sort by:</span>
                 <select
-                  value={filters.sortBy}
-                  onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
+                  value={filters.sort}
+                  onChange={(e) => handleFilterChange('sort', e.target.value)}
                 >
-                  <option value="recommended">Recommended</option>
-                  <option value="bestselling">Best Selling</option>
-                  <option value="newest">Newest</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
+                  {sortOptions.map((option, i) => (
+                    <option key={i} value={option.value}>{option.label}</option>
+                  ))}
                 </select>
               </div>
               <div className="view-toggles">
@@ -286,73 +281,137 @@ const Services = () => {
           </div>
 
           {/* Services Grid */}
-          <div className={`services-grid ${viewMode}`}>
-            {services.map(service => (
-              <div className="service-card" key={service.id}>
-                <div className="service-image">
-                  <img src={service.images[0]} alt={service.title} />
-                  <div className="service-actions">
-                    <button className="action-btn wishlist"><FiHeart /></button>
-                    <button className="action-btn share"><FiShare2 /></button>
+          {loading ? (
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Loading services...</p>
+            </div>
+          ) : services.length === 0 ? (
+            <div className="no-results">
+              <h3>No services found</h3>
+              <p>Try adjusting your filters or search criteria</p>
+              <button className="clear-filters-btn" onClick={clearFilters}>Clear Filters</button>
+            </div>
+          ) : (
+            <div className={`services-grid ${viewMode}`}>
+              {services.map(service => (
+                <div className="service-card" key={service._id}>
+                  <div className="service-image">
+                    <img
+                      src={service.images?.[0]?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(service.title)}&background=random&size=400`}
+                      alt={service.title}
+                    />
+                    <div className="service-actions">
+                      <button className="action-btn wishlist"><FiHeart /></button>
+                      <button className="action-btn share"><FiShare2 /></button>
+                    </div>
+                    {service.stats?.orders > 0 && (
+                      <span className="queue-badge">{service.stats.orders} orders</span>
+                    )}
                   </div>
-                  {service.ordersInQueue > 0 && (
-                    <span className="queue-badge">{service.ordersInQueue} in queue</span>
-                  )}
-                </div>
-                <div className="service-content">
-                  <div className="seller-row">
-                    <div className="seller-info">
-                      <div className="seller-avatar">
-                        {service.seller.name.charAt(0)}
-                      </div>
-                      <div className="seller-details">
-                        <Link to={`/profile/${service.seller.name.toLowerCase().replace(' ', '-')}`} className="seller-name">
-                          {service.seller.name}
-                          {service.seller.verified && <span className="verified">✓</span>}
-                        </Link>
-                        <span className={`seller-level ${getLevelBadgeClass(service.seller.level)}`}>
-                          {service.seller.level}
-                        </span>
+                  <div className="service-content">
+                    <div className="seller-row">
+                      <div className="seller-info">
+                        <div className="seller-avatar">
+                          {service.freelancer?.avatar ? (
+                            <img src={service.freelancer.avatar} alt={service.freelancer.firstName} />
+                          ) : (
+                            service.freelancer?.firstName?.charAt(0) || 'F'
+                          )}
+                        </div>
+                        <div className="seller-details">
+                          <Link
+                            to={`/profile/${service.freelancer?._id}`}
+                            className="seller-name"
+                          >
+                            {service.freelancer?.firstName} {service.freelancer?.lastName?.charAt(0)}.
+                            {service.freelancer?.isVerified && <span className="verified">✓</span>}
+                          </Link>
+                          <span className={`seller-level ${getLevelBadgeClass(getSellerLevel(service.freelancer))}`}>
+                            {getSellerLevel(service.freelancer)}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <h3 className="service-title">
+                      <Link to={`/service/${service._id}`}>{service.title}</Link>
+                    </h3>
+                    <div className="service-rating">
+                      <FiStar className="star-filled" />
+                      <span className="rating-value">{service.stats?.avgRating?.toFixed(1) || '5.0'}</span>
+                      <span className="review-count">({service.stats?.totalReviews || 0})</span>
+                    </div>
                   </div>
-                  <h3 className="service-title">
-                    <Link to={`/service/${service.id}`}>{service.title}</Link>
-                  </h3>
-                  <div className="service-rating">
-                    <FiStar className="star-filled" />
-                    <span className="rating-value">{service.seller.rating}</span>
-                    <span className="review-count">({service.seller.reviews})</span>
+                  <div className="service-footer">
+                    <div className="service-meta">
+                      <span className="delivery-info">
+                        <FiClock /> {service.packages?.[0]?.deliveryTime?.value || 3} day delivery
+                      </span>
+                      <span className="revisions-info">
+                        <FiRefreshCw /> {service.packages?.[0]?.revisions || 2} revisions
+                      </span>
+                    </div>
+                    <div className="service-price">
+                      <span className="price-label">Starting at</span>
+                      <span className="price-value">${service.startingPrice || service.packages?.[0]?.price || 50}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="service-footer">
-                  <div className="service-meta">
-                    <span className="delivery-info">
-                      <FiClock /> {service.packages.basic.delivery} day delivery
-                    </span>
-                    <span className="revisions-info">
-                      <FiRefreshCw /> {service.packages.basic.revisions} revisions
-                    </span>
-                  </div>
-                  <div className="service-price">
-                    <span className="price-label">Starting at</span>
-                    <span className="price-value">${service.packages.basic.price}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Pagination */}
-          <div className="pagination">
-            <button className="page-btn" disabled>Previous</button>
-            <button className="page-btn active">1</button>
-            <button className="page-btn">2</button>
-            <button className="page-btn">3</button>
-            <span className="page-dots">...</span>
-            <button className="page-btn">10</button>
-            <button className="page-btn">Next</button>
-          </div>
+          {pagination.pages > 1 && (
+            <div className="pagination">
+              <button
+                className="page-btn"
+                disabled={pagination.page === 1}
+                onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+              >
+                Previous
+              </button>
+              {[...Array(Math.min(5, pagination.pages))].map((_, i) => {
+                let pageNum;
+                if (pagination.pages <= 5) {
+                  pageNum = i + 1;
+                } else if (pagination.page <= 3) {
+                  pageNum = i + 1;
+                } else if (pagination.page >= pagination.pages - 2) {
+                  pageNum = pagination.pages - 4 + i;
+                } else {
+                  pageNum = pagination.page - 2 + i;
+                }
+                return (
+                  <button
+                    key={pageNum}
+                    className={`page-btn ${pagination.page === pageNum ? 'active' : ''}`}
+                    onClick={() => setPagination(prev => ({ ...prev, page: pageNum }))}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+              {pagination.pages > 5 && pagination.page < pagination.pages - 2 && (
+                <>
+                  <span className="page-dots">...</span>
+                  <button
+                    className="page-btn"
+                    onClick={() => setPagination(prev => ({ ...prev, page: pagination.pages }))}
+                  >
+                    {pagination.pages}
+                  </button>
+                </>
+              )}
+              <button
+                className="page-btn"
+                disabled={pagination.page === pagination.pages}
+                onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

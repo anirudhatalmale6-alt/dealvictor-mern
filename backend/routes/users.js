@@ -49,6 +49,102 @@ router.get('/', async (req, res) => {
   }
 });
 
+// @route   GET /api/users/freelancers
+// @desc    Get all freelancers with filters
+// @access  Public
+router.get('/freelancers', async (req, res) => {
+  try {
+    const {
+      skills,
+      minRate,
+      maxRate,
+      experienceLevel,
+      country,
+      availability,
+      search,
+      sort = '-stats.avgRating',
+      isOnline,
+      page = 1,
+      limit = 12
+    } = req.query;
+
+    let query = {
+      isActive: true,
+      $or: [
+        { role: 'freelancer' },
+        { roles: 'freelancer' }
+      ]
+    };
+
+    if (skills) {
+      const skillsArray = skills.split(',').map(s => new RegExp(s.trim(), 'i'));
+      query['freelancerProfile.skills'] = { $in: skillsArray };
+    }
+
+    if (minRate || maxRate) {
+      query['freelancerProfile.hourlyRate'] = {};
+      if (minRate) query['freelancerProfile.hourlyRate'].$gte = Number(minRate);
+      if (maxRate) query['freelancerProfile.hourlyRate'].$lte = Number(maxRate);
+    }
+
+    if (experienceLevel) {
+      query['freelancerProfile.experience'] = experienceLevel;
+    }
+
+    if (country) {
+      query['location.country'] = new RegExp(country, 'i');
+    }
+
+    if (availability) {
+      query['freelancerProfile.availability'] = availability;
+    }
+
+    if (isOnline === 'true') {
+      query.isOnline = true;
+    }
+
+    if (search) {
+      query.$and = [
+        query.$or ? { $or: query.$or } : {},
+        {
+          $or: [
+            { firstName: new RegExp(search, 'i') },
+            { lastName: new RegExp(search, 'i') },
+            { 'freelancerProfile.title': new RegExp(search, 'i') },
+            { 'freelancerProfile.skills': { $in: [new RegExp(search, 'i')] } }
+          ]
+        }
+      ];
+      delete query.$or;
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [users, total] = await Promise.all([
+      User.find(query)
+        .select('-password -resetPasswordToken -verificationToken -notifications -withdrawalRequests')
+        .sort(sort)
+        .skip(skip)
+        .limit(Number(limit)),
+      User.countDocuments(query)
+    ]);
+
+    res.json({
+      success: true,
+      users,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        pages: Math.ceil(total / Number(limit))
+      }
+    });
+  } catch (err) {
+    console.error('Get freelancers error:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // @route   GET /api/users/:id
 // @desc    Get user by ID
 // @access  Public

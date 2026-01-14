@@ -20,6 +20,7 @@ import PostProject from './pages/PostProject';
 import ProjectDetail from './pages/ProjectDetail';
 import Shop from './pages/Shop';
 import Services from './pages/Services';
+import Freelancers from './pages/Freelancers';
 import Membership from './pages/Membership';
 import Messages from './pages/Messages';
 import ProductDetail from './pages/ProductDetail';
@@ -35,6 +36,8 @@ import AdminMemberships from './pages/admin/AdminMemberships';
 import AdminCommissions from './pages/admin/AdminCommissions';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminServices from './pages/admin/AdminServices';
+import AdminProjects from './pages/admin/AdminProjects';
 
 // Styles
 import './styles/global.css';
@@ -74,6 +77,7 @@ function App() {
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/services" element={<Services />} />
               <Route path="/service/:id" element={<ServiceDetail />} />
+              <Route path="/freelancers" element={<Freelancers />} />
               <Route path="/profile/:username" element={<Profile />} />
               <Route path="/membership" element={<Membership />} />
               <Route path="/cart" element={<Cart />} />
@@ -114,6 +118,8 @@ function App() {
                 <Route path="commissions" element={<AdminCommissions />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="settings" element={<AdminSettings />} />
+                <Route path="services" element={<AdminServices />} />
+                <Route path="projects" element={<AdminProjects />} />
               </Route>
             </Routes>
           </main>

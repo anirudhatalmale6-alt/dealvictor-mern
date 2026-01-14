@@ -67,21 +67,49 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'DealVictor API is running' });
 });
 
+// Track online users
+const onlineUsers = new Map();
+
 // Socket.io connection handling
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  // Join user to their personal room
-  socket.on('join', (userId) => {
+  // Join user to their personal room and mark as online
+  socket.on('join', async (userId) => {
     socket.join(userId);
-    console.log(`User ${userId} joined their room`);
+    socket.userId = userId;
+    onlineUsers.set(userId, socket.id);
+
+    // Update user's online status in database
+    try {
+      const User = require('./models/User');
+      await User.findByIdAndUpdate(userId, {
+        isOnline: true,
+        lastSeen: new Date()
+      });
+    } catch (err) {
+      console.error('Error updating user online status:', err);
+    }
+
+    // Broadcast to all users that this user is online
+    io.emit('userOnline', userId);
+    console.log(`User ${userId} joined their room and is now online`);
   });
 
   // Handle private messages
-  socket.on('sendMessage', (data) => {
+  socket.on('sendMessage', async (data) => {
     const { senderId, receiverId, message } = data;
+
+    // Emit to receiver
     io.to(receiverId).emit('newMessage', {
       senderId,
+      message,
+      timestamp: new Date()
+    });
+
+    // Also emit to sender for confirmation
+    io.to(senderId).emit('messageSent', {
+      receiverId,
       message,
       timestamp: new Date()
     });
@@ -94,8 +122,50 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('disconnect', () => {
+  // Handle stop typing
+  socket.on('stopTyping', (data) => {
+    socket.to(data.receiverId).emit('userStoppedTyping', {
+      senderId: data.senderId
+    });
+  });
+
+  // Handle read receipts
+  socket.on('messageRead', (data) => {
+    const { senderId, messageId } = data;
+    io.to(senderId).emit('messageRead', {
+      messageId,
+      readAt: new Date()
+    });
+  });
+
+  socket.on('disconnect', async () => {
+    const userId = socket.userId;
+    if (userId) {
+      onlineUsers.delete(userId);
+
+      // Update user's offline status in database
+      try {
+        const User = require('./models/User');
+        await User.findByIdAndUpdate(userId, {
+          isOnline: false,
+          lastSeen: new Date()
+        });
+      } catch (err) {
+        console.error('Error updating user offline status:', err);
+      }
+
+      // Broadcast to all users that this user is offline
+      io.emit('userOffline', userId);
+    }
     console.log('User disconnected:', socket.id);
+  });
+});
+
+// Endpoint to get online users
+app.get('/api/users/online', (req, res) => {
+  res.json({
+    success: true,
+    onlineUsers: Array.from(onlineUsers.keys())
   });
 });
 

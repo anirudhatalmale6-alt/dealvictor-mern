@@ -94,9 +94,20 @@ const projectSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['draft', 'open', 'in_progress', 'completed', 'cancelled', 'disputed'],
-    default: 'open'
+    enum: ['draft', 'pending', 'open', 'in_progress', 'completed', 'cancelled', 'disputed', 'rejected'],
+    default: 'pending'
   },
+  approvalStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  approvedAt: Date,
+  rejectionReason: String,
   visibility: {
     type: String,
     enum: ['public', 'private', 'invite_only'],
