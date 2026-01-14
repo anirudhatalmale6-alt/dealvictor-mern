@@ -30,10 +30,11 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   };
 
-  const login = async (email, password) => {
+  const login = async (identifier, password) => {
     try {
       setError(null);
-      const res = await authAPI.login({ email, password });
+      // Support login with email, phone, or username
+      const res = await authAPI.login({ identifier, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       setUser(res.data.user);
@@ -42,7 +43,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed';
       setError(message);
-      return { success: false, error: message };
+      throw err;
     }
   };
 

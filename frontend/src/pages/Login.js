@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiAlertCircle } from 'react-icons/fi';
+import { FiUser, FiLock, FiEye, FiEyeOff, FiAlertCircle } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import './Auth.css';
 
@@ -9,7 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
-    email: '',
+    identifier: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -27,11 +27,11 @@ const Login = () => {
     setError('');
 
     try {
-      await login(formData.email, formData.password);
+      await login(formData.identifier, formData.password);
       toast.success('Welcome back!');
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password');
+      setError(err.response?.data?.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -87,15 +87,15 @@ const Login = () => {
 
             <form onSubmit={handleSubmit} className="auth-form">
               <div className="form-group">
-                <label className="form-label">Email Address</label>
+                <label className="form-label">Email, Phone, or Username</label>
                 <div className="input-wrapper">
-                  <FiMail className="input-icon" />
+                  <FiUser className="input-icon" />
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
+                    type="text"
+                    name="identifier"
+                    value={formData.identifier}
                     onChange={handleChange}
-                    placeholder="Enter your email"
+                    placeholder="Enter email, phone, or username"
                     className="form-input"
                     required
                   />

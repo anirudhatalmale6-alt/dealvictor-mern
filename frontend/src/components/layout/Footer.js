@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiYoutube, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
+import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiYoutube, FiMail, FiPhone, FiDownload, FiSmartphone } from 'react-icons/fi';
 import './Footer.css';
 
 const Footer = () => {
@@ -21,6 +21,19 @@ const Footer = () => {
               <a href="#" className="social-link" aria-label="Instagram"><FiInstagram /></a>
               <a href="#" className="social-link" aria-label="LinkedIn"><FiLinkedin /></a>
               <a href="#" className="social-link" aria-label="YouTube"><FiYoutube /></a>
+            </div>
+
+            {/* Mobile App Download */}
+            <div className="app-download">
+              <h5 className="app-title">Get the App</h5>
+              <a href="/downloads/dealvictor-app.apk" className="app-download-btn android" download>
+                <FiSmartphone className="app-icon" />
+                <div className="app-text">
+                  <span className="app-label">Download for</span>
+                  <span className="app-platform">Android</span>
+                </div>
+                <FiDownload className="download-icon" />
+              </a>
             </div>
           </div>
 

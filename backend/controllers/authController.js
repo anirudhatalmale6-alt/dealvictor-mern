@@ -88,10 +88,27 @@ exports.register = async (req, res) => {
 // @access  Public
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, identifier } = req.body;
 
-    // Check for user
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+    // Support login with email, phone, or username
+    const loginIdentifier = identifier || email;
+
+    if (!loginIdentifier) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide email, phone number, or username'
+      });
+    }
+
+    // Check for user by email, phone, or username
+    const user = await User.findOne({
+      $or: [
+        { email: loginIdentifier.toLowerCase() },
+        { phone: loginIdentifier },
+        { username: loginIdentifier.toLowerCase() }
+      ]
+    }).select('+password');
+
     if (!user) {
       return res.status(401).json({
         success: false,

@@ -29,6 +29,8 @@ import Profile from './pages/Profile';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderTracking from './pages/OrderTracking';
+import Search from './pages/Search';
+import CreateService from './pages/CreateService';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -55,6 +57,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/search" element={<Search />} />
               <Route
                 path="/dashboard"
                 element={
@@ -77,6 +80,14 @@ function App() {
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/services" element={<Services />} />
               <Route path="/service/:id" element={<ServiceDetail />} />
+              <Route
+                path="/create-service"
+                element={
+                  <PrivateRoute>
+                    <CreateService />
+                  </PrivateRoute>
+                }
+              />
               <Route path="/freelancers" element={<Freelancers />} />
               <Route path="/profile/:username" element={<Profile />} />
               <Route path="/membership" element={<Membership />} />
