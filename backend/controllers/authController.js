@@ -15,7 +15,20 @@ const generateToken = (userId) => {
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role, phone, country } = req.body;
+    const { firstName, lastName, name, email, password, role, phone, country } = req.body;
+
+    // Handle both name formats (name or firstName/lastName)
+    let userFirstName = firstName;
+    let userLastName = lastName;
+
+    if (!firstName && name) {
+      const nameParts = name.split(' ');
+      userFirstName = nameParts[0] || 'User';
+      userLastName = nameParts.slice(1).join(' ') || 'Account';
+    }
+
+    if (!userFirstName) userFirstName = 'User';
+    if (!userLastName) userLastName = 'Account';
 
     // Check if user exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
@@ -26,26 +39,24 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create user with default membership
+    // Create user with default membership (password will be hashed by model pre-save)
     const user = await User.create({
-      name,
+      firstName: userFirstName,
+      lastName: userLastName,
       email: email.toLowerCase(),
-      password: hashedPassword,
-      role: role || 'freelancer',
+      password: password,
+      role: role || 'buyer',
+      roles: [role || 'buyer'],
       phone,
-      country,
+      location: { country },
+      isVerified: true,
+      isActive: true,
       membership: {
         plan: 'free',
         bidsRemaining: 10,
         bidsPerMonth: 10,
         platformFee: 10,
-        startDate: new Date(),
-        endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
-        autoRenew: false
+        isActive: true
       }
     });
 
